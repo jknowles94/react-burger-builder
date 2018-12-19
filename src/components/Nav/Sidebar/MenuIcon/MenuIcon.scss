@@ -1,0 +1,15 @@
+.menu_burger {
+  display: block;
+  width: 25px;
+  cursor: pointer;
+
+  div {
+    height: 2px;
+    width: 100%;
+    background-color: #fff;
+    margin: 5px 0;
+  }
+  @media (min-width: 500px) {
+    display: none;
+  }
+}
