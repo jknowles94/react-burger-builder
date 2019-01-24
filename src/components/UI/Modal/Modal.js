@@ -6,7 +6,7 @@ class Modal extends React.Component {
   //Because the Modal is wrapping order summary checking if the modal is showing will only render the ordersummary then
   //If more checks are needed think about using pure component
   shouldComponentUpdate(nextProps, nextState) {
-    return nextProps.show !== this.props.show;
+    return nextProps.show !== this.props.show || nextProps.children !== this.props.children;
   }
 
   render() {
