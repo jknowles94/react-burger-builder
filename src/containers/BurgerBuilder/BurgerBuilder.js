@@ -15,15 +15,20 @@ const INGREDIENT_PRICES = {
 
 class BurgerBuilder extends Component {
   state = {
-    ingredients: {
-      salad: 0,
-      bacon: 0,
-      cheese: 0,
-      meat: 0
-    },
+    ingredients: null,
     totalPrice: 4,
     purchasable: false,
     purchaseMode: false
+  }
+
+  componentDidMount() {
+    axios.get('https://react-burger-builder-c2681.firebaseio.com/ingredients.json')
+    .then(res => {
+      this.setState({
+        ingredients: res.data
+      });
+    })
+    .catch(err => {});
   }
 
   addIngredientHandler = (type) => {
@@ -125,20 +130,33 @@ class BurgerBuilder extends Component {
       //returns true or false
       disabledInfo[key] = disabledInfo[key] <= 0;
     }
-    return (
-      <React.Fragment>
+    let burger = (<p>Loading...</p>);
+    let orderSummary = null;
+    if(this.state.ingredients) {
+      burger = (
+        <React.Fragment>
+          <Burger ingredients={this.state.ingredients}/>
+          <BuildControls 
+            addIngredient={this.addIngredientHandler}
+            removeIngredient={this.removeIngredientHandler} 
+            disabled={disabledInfo} 
+            price={this.state.totalPrice}
+            purchasable={this.state.purchasable}
+            purchaseMode={this.purchaseHandler}
+            />
+        </React.Fragment>
+      );
+      orderSummary = (
         <Model show={this.state.purchaseMode} modelClose={this.purchaseCancelHandler}>
           <OrderSummary ingredients={this.state.ingredients} cancel={this.purchaseCancelHandler} continue={this.purchaseContinueHandler} price={this.state.totalPrice}/>
         </Model>
-        <Burger ingredients={this.state.ingredients}/>
-        <BuildControls 
-          addIngredient={this.addIngredientHandler}
-          removeIngredient={this.removeIngredientHandler} 
-          disabled={disabledInfo} 
-          price={this.state.totalPrice}
-          purchasable={this.state.purchasable}
-          purchaseMode={this.purchaseHandler}
-          />
+      );
+    }
+    
+    return (
+      <React.Fragment>
+        {orderSummary}
+        {burger}
       </React.Fragment>
     );
   }
